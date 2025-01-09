@@ -1,3 +1,4 @@
+import { env } from "process";
 import { BcryptAdapter, envs, JWTAdapter } from "../../config";
 import { UserModel } from "../../data";
 import { CustomError } from "../../domain";
@@ -22,7 +23,10 @@ export class AuthService {
             
             const { active, role, ...newUser } = UserEntity.fromObject( user );
 
+            const payload = { user: newUser.id, active, account_action: envs.ACCOUNT_ACTION};
+            
             // TODO: implement logic for send mail of activation account
+            
 
             return { user: newUser };
 
@@ -40,15 +44,32 @@ export class AuthService {
         const  { active, role, ...user }  = UserEntity.fromObject( existsUser );
         if( !active ) throw CustomError.unathorized( "active your account" );
 
-        const payload = {
-            user: user.id,
-            role: role,
-        }
+        const payload = { user: user.id, role: role }
 
         const token = await JWTAdapter.generateToken({ payload, jwtSeed: envs.JWT_SEED, duration: envs.DURATION });
         if(!token) throw CustomError.intenalServer( "Error while creating JWT" );
 
         return { user, token }
+    }
+
+    public async validateAccount( token:string ) {
+        const payload = await JWTAdapter.validateToken( token, envs.JWT_SEED );
+        const { user, account_action } = payload as { user: string, account_action: string};
+        
+        const existsUser = await UserModel.findById( user );
+        if( !existsUser ) throw CustomError.unathorized( "token is invalid" );
+        if( envs.ACCOUNT_ACTION !== account_action  ) throw CustomError.unathorized( "token is invalid" );
+
+        if( existsUser.active ) throw CustomError.unathorized( "Account activated" )
+        
+
+        const userEntity = UserEntity.fromObject( existsUser );
+        userEntity.active = true;
+
+
+        const userUpdate = await UserModel.findByIdAndUpdate( user, userEntity, { new: true});
+        
+        return { user: userUpdate}        
     }
 
 }

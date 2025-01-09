@@ -8,4 +8,5 @@ export const envs = {
     DB_NAME: get("DB_NAME").required().asString(),
     DURATION: get("DURATION").required().asString(),
     JWT_SEED: get("JWT_SEED").required().asString(),
+    ACCOUNT_ACTION: get("ACCOUNT_ACTION").required().asString(),
 }

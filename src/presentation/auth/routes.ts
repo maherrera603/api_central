@@ -13,7 +13,7 @@ export class AuthRoutes {
 
         routes.post( "/auth/register", controller.register );
         routes.post( "/auth/singIn", controller.singIn );
-        routes.get( "/auth/accountActive/:verifyAccount", controller.verifyAccount );
+        routes.get( "/auth/accountActive/:token", controller.verifyAccount );
 
         return routes;
     }

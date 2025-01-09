@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { RegisterDTO, SingInDTO } from "../../domain/dtos";
 import { AuthService } from "../services";
 import { CustomError } from "../../domain";
-import { errorMonitor } from "events";
+
 
 export class AuthController {
 
@@ -43,7 +43,11 @@ export class AuthController {
 
 
     public verifyAccount = ( req: Request, res:Response ) => {
-        res.json("VerifyAccount");
+        const { token } = req.params;
+        this.authService.validateAccount( token )
+            .then( account => res.json( account ) )
+            .catch( error => this.handleError( error, res ) )
+        
     }
 
 

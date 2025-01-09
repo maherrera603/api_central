@@ -7,7 +7,7 @@ export class UserEntity {
         public document: string,
         public phone: string,
         public email: string,
-        public active: string,
+        public active: boolean,
         public role: string[],
         public id?: string,
     ){}
