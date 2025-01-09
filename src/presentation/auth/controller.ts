@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { RegisterDTO } from "../../domain/dtos";
+import { RegisterDTO, SingInDTO } from "../../domain/dtos";
 import { AuthService } from "../services";
 import { CustomError } from "../../domain";
+import { errorMonitor } from "events";
 
 export class AuthController {
 
@@ -28,7 +29,16 @@ export class AuthController {
 
 
     public singIn = ( req: Request, res: Response ) => {
-        res.json("singIn");
+        const [ error, singInDto] = SingInDTO.singIn( req.body );
+        if( error ) {
+            res.status(400).json({ error });
+            return;
+        }
+
+
+        this.authService.singIn( singInDto! )
+            .then( login => res.status(200).json( login ) )
+            .catch( error => this.handleError( error, res));
     }
 
 

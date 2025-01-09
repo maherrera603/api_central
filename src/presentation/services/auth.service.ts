@@ -1,7 +1,7 @@
-import { BcryptAdapter } from "../../config/bcrypt.adapter";
+import { BcryptAdapter, envs, JWTAdapter } from "../../config";
 import { UserModel } from "../../data";
 import { CustomError } from "../../domain";
-import { RegisterDTO } from "../../domain/dtos";
+import { RegisterDTO, SingInDTO } from "../../domain/dtos";
 import { UserEntity } from "../../domain/entities";
 
 
@@ -20,7 +20,7 @@ export class AuthService {
             user.password = BcryptAdapter.hash( registerDto.password );
             await user.save();
             
-            const newUser = UserEntity.fromObject( user );
+            const { active, role, ...newUser } = UserEntity.fromObject( user );
 
             // TODO: implement logic for send mail of activation account
 
@@ -30,6 +30,25 @@ export class AuthService {
             // TODO: implement logic for logger file
             throw CustomError.intenalServer( `${error}` );
         }
+    }
+
+    public async singIn( singInDto: SingInDTO ){
+
+        const existsUser = await UserModel.findOne({ email: singInDto.email });
+        if( !existsUser ) throw CustomError.badRequest( "email or/and password incorrect" );
+
+        const  { active, role, ...user }  = UserEntity.fromObject( existsUser );
+        if( !active ) throw CustomError.unathorized( "active your account" );
+
+        const payload = {
+            user: user.id,
+            role: role,
+        }
+
+        const token = await JWTAdapter.generateToken({ payload, jwtSeed: envs.JWT_SEED, duration: envs.DURATION });
+        if(!token) throw CustomError.intenalServer( "Error while creating JWT" );
+
+        return { user, token }
     }
 
 }

@@ -1,4 +1,5 @@
-import { regular_exp } from "../../../config/regular_exp";
+import { regular_exp } from "../../../config";
+
 
 export class RegisterDTO {
 
@@ -42,7 +43,7 @@ export class RegisterDTO {
 
         if( !password ) return [ "Missing password" ];
 
-        if( password.length < 7 ) return [ "Password to short, contain less 8 characters"];
+        if( password.length < 7 ) return [ "Password to short, contain less 8 characters" ];
 
         if( password.length > 12 ) return [ "Password to long, contain less 12 characters" ];
 
