@@ -4,11 +4,14 @@ import { UserModel } from "../../data";
 import { CustomError } from "../../domain";
 import { RegisterDTO, SingInDTO } from "../../domain/dtos";
 import { UserEntity } from "../../domain/entities";
+import { EmailService } from "./email.service";
 
 
 export class AuthService {
 
-    constructor(){}
+    constructor( 
+        private readonly emailService: EmailService,
+    ){}
 
 
     public async register( registerDto: RegisterDTO ) {
@@ -25,8 +28,7 @@ export class AuthService {
 
             const payload = { user: newUser.id, active, account_action: envs.ACCOUNT_ACTION};
             
-            // TODO: implement logic for send mail of activation account
-            
+            await this.sendEmailValidationLink( payload, newUser.email );
 
             return { user: newUser };
 
@@ -66,10 +68,31 @@ export class AuthService {
         const userEntity = UserEntity.fromObject( existsUser );
         userEntity.active = true;
 
-
         const userUpdate = await UserModel.findByIdAndUpdate( user, userEntity, { new: true});
         
         return { user: userUpdate}        
+    }
+
+    private sendEmailValidationLink = async ( payload: any, email: string ) =>  {
+        const token = await JWTAdapter.generateToken({ payload, duration: envs.DURATION, jwtSeed: envs.JWT_SEED});
+        if( !token ) throw CustomError.intenalServer( "Error getting token" );
+
+        const link = `${envs.WEB_FRONTEND_URL}/${token}`;
+        const html = `
+            <h1>Bienvenido a nuestro sistema de citas medicas</h1>
+            <p>Haz click en el boton para realizar la activacion de la cuenta</p>
+            <a href="${link}"> Activa tu cuenta </a>
+        `
+        const options = {
+            to: email,
+            subject: "Activacion de cuenta",
+            htmlBody: html
+        }
+
+        const isSet = await this.emailService.sendEmail( options );
+        if( !isSet ) throw CustomError.intenalServer( "Error sendig email" );
+
+        return true;
     }
 
 }

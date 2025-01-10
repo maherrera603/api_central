@@ -19,7 +19,7 @@ export class RegisterDTO {
 
     static create(object: {[key: string]: any}): [ string?, RegisterDTO? ]{
 
-        const { name, last_name, type_document, document, phone, email, password } = object;
+        const { name, last_name, type_document, document, phone, email, password, role = "USER_ROLE" } = object;
 
         if( !name ) return [ "Missing name" ];
 
@@ -49,6 +49,6 @@ export class RegisterDTO {
 
         if( !regular_exp.password.test( password ) ) return [ "Incorrect password, password must have 1 uppercase character, 1 lowercase character and 1 special character" ];
 
-        return [ undefined, new RegisterDTO( name, last_name, type_document, document, phone, email, password ) ];
+        return [ undefined, new RegisterDTO( name, last_name, type_document, document, phone, email, password, false, role ) ];
     }
 }
