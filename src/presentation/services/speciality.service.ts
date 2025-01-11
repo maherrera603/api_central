@@ -42,4 +42,21 @@ export class SpecialityService {
         }
     }
 
+
+    public async updateSpeciality( id: string, specialityCreateDto: SpecialityCreateDTO ){
+
+        try {
+            
+            const existsSpeciality = await SpecialityModel.findById( id );
+            if( !existsSpeciality ) throw CustomError.notFount( "Speciality not exists" );
+            
+            const speciality = await SpecialityModel.findByIdAndUpdate( id, specialityCreateDto, { new: true } );
+            
+            return { speciality }
+            
+        } catch (error) {
+            throw CustomError.notFount( "Speciality not exists" );
+        }
+    }
+
 }

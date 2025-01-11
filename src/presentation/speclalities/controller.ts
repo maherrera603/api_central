@@ -3,6 +3,7 @@ import { SpecialityCreateDTO } from "../../domain/dtos";
 import { SpecialityService } from "../services";
 import { CustomError } from "../../domain";
 import { error } from "console";
+import { json } from "stream/consumers";
 
 
 export class SpecialityController {
@@ -59,7 +60,17 @@ export class SpecialityController {
     }
 
     public updateSpeciality = ( req: Request, res: Response ) => {
-        res.json( "updateSpeciality" );
+        const { id } = req.params;
+
+        const [ error, specialityCreateDto ] = SpecialityCreateDTO.create( req.body );
+        if( error ) {
+            res.status( 404 ).json({ error });
+            return;
+        }
+
+        this.specialityService.updateSpeciality( id, specialityCreateDto! )
+            .then( speciality => res.json( speciality ) )
+            .catch( error => this.handleError( error, res ) );
     }
 
 
