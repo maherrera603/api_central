@@ -23,5 +23,14 @@ export class SpecialityService {
         }
     }
 
-    
+    public async allSpecialities ( active: boolean | undefined ) {
+
+        const specialities = ( active === undefined ) 
+            ? await SpecialityModel.find()
+            : await SpecialityModel.find({ active })
+
+        return specialities;
+    }
+
+
 }

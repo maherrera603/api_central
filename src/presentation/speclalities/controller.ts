@@ -3,6 +3,7 @@ import { SpecialityCreateDTO } from "../../domain/dtos";
 import { SpecialityService } from "../services";
 import { CustomError } from "../../domain";
 
+
 export class SpecialityController {
 
     constructor( private readonly specialityService: SpecialityService){}
@@ -32,7 +33,20 @@ export class SpecialityController {
     }
 
     public allSpecialities = ( req: Request, res: Response ) => {
-        res.json( " all specialities" );
+
+        const { active } = req.query;
+        
+        const isActive = (active === "false") 
+            ? false
+            : (active === "true") ? true
+            : undefined;
+        
+        
+        this.specialityService.allSpecialities( isActive )
+            .then( specialities => res.json( specialities ) )
+            .catch( error => this.handleError( error, res ) );
+
+        
     }
 
     public getSpeciality = ( req: Request, res: Response ) => {
