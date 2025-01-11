@@ -32,5 +32,14 @@ export class SpecialityService {
         return specialities;
     }
 
+    public async getSpeciality( id: string ) {
+
+        try {
+            const speciality = await SpecialityModel.findById(id);
+            return speciality;
+        } catch (error) {
+            throw CustomError.notFount( "Speciality not exists" );
+        }
+    }
 
 }

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { SpecialityCreateDTO } from "../../domain/dtos";
 import { SpecialityService } from "../services";
 import { CustomError } from "../../domain";
+import { error } from "console";
 
 
 export class SpecialityController {
@@ -46,13 +47,16 @@ export class SpecialityController {
             .then( specialities => res.json( specialities ) )
             .catch( error => this.handleError( error, res ) );
 
-        
     }
 
     public getSpeciality = ( req: Request, res: Response ) => {
-        res.json( "getSpecialities" );
-    }
 
+        const { id } = req.params;
+
+        this.specialityService.getSpeciality( id )
+            .then( speciality => res.json( speciality ))
+            .catch( error => this.handleError( error, res ) );
+    }
 
     public updateSpeciality = ( req: Request, res: Response ) => {
         res.json( "updateSpeciality" );
