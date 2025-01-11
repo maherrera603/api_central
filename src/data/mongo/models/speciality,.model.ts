@@ -4,6 +4,7 @@ const specialitySchema = new Schema({
     speciality: {
         type: String,
         required: [ true, "Missing speciality" ],
+        unique: true,
     },
     active: {
         type: Boolean,

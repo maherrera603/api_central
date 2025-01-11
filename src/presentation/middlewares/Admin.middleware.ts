@@ -22,7 +22,13 @@ export class AdminMiddleware {
 
         try {
             
-            const {role, user } = await JWTAdapter.validateToken( token, envs.JWT_SEED ) as { role: string, user: string};
+            const payload = await JWTAdapter.validateToken( token, envs.JWT_SEED );
+            if( !payload ) {
+                res.status( 403 ).json({ error: "Token has expired" });
+                return;
+            }
+
+            const { role, user } = payload as { role: string, user: string};
             if( role !== "ADMIN_ROLE") {
                 res.status( 403 ).json( "token invalid");
                 return;

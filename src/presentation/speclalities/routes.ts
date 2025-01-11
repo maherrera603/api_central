@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { SpecialityController } from "./controller";
+import { SpecialityService } from "../services";
 
 export class SpecialityRoutes {
 
@@ -7,7 +8,8 @@ export class SpecialityRoutes {
     static get routes(): Router {
 
         const routes = Router();
-        const specialityController = new SpecialityController();
+        const specialityService = new SpecialityService();
+        const specialityController = new SpecialityController( specialityService );
 
         routes.get( "/specialities", specialityController.allSpecialities );
         routes.post( "/speciality", specialityController.createSpeciality );
