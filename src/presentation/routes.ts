@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { AuthRoutes } from "./auth";
 import { SpecialityRoutes } from "./speclalities";
-import { AdminMiddleware } from "./middlewares/Admin.middleware";
+import { DoctorRoutes } from "./doctors";
 
 export class AppRouter {
 
@@ -11,7 +11,8 @@ export class AppRouter {
         const apiEndPoint = "/api/v1";
 
         routes.use( apiEndPoint, AuthRoutes.routes );
-        routes.use( apiEndPoint, [ AdminMiddleware.validateJWT ], SpecialityRoutes.routes );
+        routes.use( apiEndPoint, SpecialityRoutes.routes );
+        routes.use( apiEndPoint, DoctorRoutes.routes )
  
         return routes;
     }
