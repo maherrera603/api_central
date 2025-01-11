@@ -35,8 +35,12 @@ export class SpecialityService {
     public async getSpeciality( id: string ) {
 
         try {
+            
             const speciality = await SpecialityModel.findById(id);
+            if ( !speciality ) throw CustomError.notFount( "Speciality not Exists" );
+
             return speciality;
+
         } catch (error) {
             throw CustomError.notFount( "Speciality not exists" );
         }
@@ -57,6 +61,23 @@ export class SpecialityService {
         } catch (error) {
             throw CustomError.notFount( "Speciality not exists" );
         }
+    }
+
+
+    public async deleteSpeciality( id: string ){
+
+        try {
+            const speciality = await SpecialityModel.findById( id );
+            if ( !speciality ) throw CustomError.notFount( "Speciality not Exists" );
+
+            const isDelete = await SpecialityModel.findByIdAndDelete( id, {new: true} );
+            
+            return { isDelete };
+            
+        } catch (error) {
+            throw CustomError.notFount( "Speciality not Exists" );
+        }
+
     }
 
 }

@@ -28,7 +28,7 @@ export class SpecialityController {
         }
 
         this.specialityService.create( specialityCreateDto! )
-            .then( speciality => res.status( 201 ).json({ speciality }))
+            .then( speciality => res.status( 201 ).json( speciality ) )
             .catch( error => this.handleError( error, res ) );
 
         
@@ -75,7 +75,13 @@ export class SpecialityController {
 
 
     public deleteSpeciality = ( req: Request, res: Response ) => {
-        res.json( "deleteSpeciality" );
+
+        const { id } = req.params;
+
+        this.specialityService.deleteSpeciality( id )
+            .then( speciality => res.json( speciality ))
+            .catch( error  => this.handleError( error, res ) );
+
     }
 
 }
