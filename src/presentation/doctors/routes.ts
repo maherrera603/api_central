@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { DoctorController } from "./controller";
 import { AdminMiddleware } from "../middlewares/Admin.middleware";
+import { DoctorService } from "../services";
 
 export class DoctorRoutes {
 
@@ -9,7 +10,9 @@ export class DoctorRoutes {
 
         const routes = Router();
 
-        const doctorController = new DoctorController();
+        const doctorService = new DoctorService();
+        
+        const doctorController = new DoctorController( doctorService );
 
         routes.get( "/doctors", [ AdminMiddleware.validateJWT ], doctorController.allDoctors );
         routes.post( "/doctors", [ AdminMiddleware.validateJWT ], doctorController.createDoctor );
