@@ -1,4 +1,4 @@
-import { DoctorModel } from "../../data";
+import { DoctorModel, SpecialityModel } from "../../data";
 import { CustomError } from "../../domain";
 import { CreateDoctorDTO } from "../../domain/dtos";
 
@@ -23,6 +23,21 @@ export class DoctorService {
         } catch (error) {
             throw CustomError.intenalServer( "Internal Server Error" );
         }
+    }
+
+    public async allDoctors( speciality: string ){
+       
+        if ( speciality !== "" ){
+
+            let special = await SpecialityModel.findOne({ speciality });
+            const doctors = await DoctorModel.find({ speciality: special });
+            return doctors;
+
+        }
+        
+        
+        const doctors = await DoctorModel.find();
+        return doctors;
     }
 
 

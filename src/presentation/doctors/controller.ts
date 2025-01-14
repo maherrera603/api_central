@@ -16,7 +16,15 @@ export class DoctorController {
 
 
     public allDoctors = ( req: Request, res: Response ) => {
-        res.json("allDoctors");        
+
+        const { speciality = "" } = req.query;
+        
+        
+
+        this.doctorService.allDoctors( String( speciality ) )
+            .then( doctors => res.json( doctors ) )
+            .catch( error => this.handleError( error, res ));
+        
     }
 
 
