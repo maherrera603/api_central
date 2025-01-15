@@ -1,3 +1,4 @@
+import { Validators } from "../../config";
 import { DoctorModel, SpecialityModel } from "../../data";
 import { CustomError } from "../../domain";
 import { CreateDoctorDTO } from "../../domain/dtos";
@@ -29,16 +30,31 @@ export class DoctorService {
        
         if ( speciality !== "" ){
 
-            let special = await SpecialityModel.findOne({ speciality });
+            const special = await SpecialityModel.findOne({ speciality });
             const doctors = await DoctorModel.find({ speciality: special });
             return doctors;
 
         }
-        
-        
+                
         const doctors = await DoctorModel.find();
         return doctors;
     }
 
+
+    public async getDoctor( id: string ) {
+
+        if( !Validators.isMongoID( id ) ) throw CustomError.badRequest( "Parameter id is not valid" );
+
+        try {
+            const doctor = await DoctorModel.findById( id );
+            if ( !doctor ) throw CustomError.notFount( "The doctor does not exist" );
+
+            return { doctor }
+
+        } catch (error) {
+            throw CustomError.notFount( "The doctor does not exist" );
+        }
+
+    }
 
 }

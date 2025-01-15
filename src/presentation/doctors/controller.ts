@@ -20,7 +20,6 @@ export class DoctorController {
         const { speciality = "" } = req.query;
         
         
-
         this.doctorService.allDoctors( String( speciality ) )
             .then( doctors => res.json( doctors ) )
             .catch( error => this.handleError( error, res ));
@@ -43,7 +42,11 @@ export class DoctorController {
     }
 
     public getDoctor = ( req: Request, res: Response ) => {
-        res.json("getDoctor");
+        const { id } = req.params;
+
+        this.doctorService.getDoctor( id )
+            .then( doctor => res.json( doctor ) )
+            .catch( error => this.handleError( error, res ) );
     }
 
     public updateDoctor = ( req: Request, res: Response ) => {
