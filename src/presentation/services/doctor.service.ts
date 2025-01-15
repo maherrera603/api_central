@@ -77,4 +77,21 @@ export class DoctorService {
 
     }
 
+
+    public async deleteDoctor( id: string ){
+
+        if( !Validators.isMongoID( id ) ) throw CustomError.badRequest( "Parameter id is not valid" );
+
+        try {
+            const doctor = await DoctorModel.findById( id );
+            if( !doctor ) throw CustomError.badRequest( "the doctor does not exists" );
+
+            const deleteDoctor = await DoctorModel.findByIdAndDelete( id, { new: true} );
+            
+            return { doctor: deleteDoctor  }
+        } catch (error) {
+            throw CustomError.badRequest( "the doctor does not exists" );
+        }
+    }
+
 }

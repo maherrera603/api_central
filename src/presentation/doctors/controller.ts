@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { DoctorService } from "../services";
 import { CreateDoctorDTO } from "../../domain/dtos";
 import { CustomError } from "../../domain";
-import { Validators } from "../../config";
+
 
 
 
@@ -22,7 +22,7 @@ export class DoctorController {
         
         
         this.doctorService.allDoctors( String( speciality ) )
-            .then( doctors => res.json( doctors ) )
+            .then( response => res.json( response ) )
             .catch( error => this.handleError( error, res ));
         
     }
@@ -37,7 +37,7 @@ export class DoctorController {
         }
 
         this.doctorService.createDoctor( createDoctorDto! )
-            .then( doctor => res.json( doctor ) )
+            .then( response => res.json( response ) )
             .catch( error => this.handleError( error, res ));
 
     }
@@ -69,7 +69,13 @@ export class DoctorController {
     }
 
     public deleteDoctor = ( req: Request, res: Response ) => {
-        res.json("deleteDoctor");
+
+        const { id } = req.params;
+
+        this.doctorService.deleteDoctor( id )
+            .then( response => res.json( response ) )
+            .catch( error => this.handleError( error, res ) );
+
     }
 
 
