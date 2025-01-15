@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { SpecialityController } from "./controller";
 import { SpecialityService } from "../services";
-import { AdminMiddleware } from "../middlewares/Admin.middleware";
+import { AuthMiddleware } from "../middlewares";
 
 export class SpecialityRoutes {
 
@@ -11,12 +11,13 @@ export class SpecialityRoutes {
         const routes = Router();
         const specialityService = new SpecialityService();
         const specialityController = new SpecialityController( specialityService );
+        
 
-        routes.get( "/specialities", [ AdminMiddleware.validateJWT ], specialityController.allSpecialities );
-        routes.post( "/speciality", [ AdminMiddleware.validateJWT ], specialityController.createSpeciality );
-        routes.get( "/speciality/:id", [ AdminMiddleware.validateJWT ], specialityController.getSpeciality );
-        routes.put( "/speciality/:id",  [ AdminMiddleware.validateJWT ],specialityController.updateSpeciality );
-        routes.delete( "/speciality/:id", [ AdminMiddleware.validateJWT ], specialityController.deleteSpeciality );
+        routes.get( "/specialities", [ AuthMiddleware.validateJWT([ "ADMIN_ROLE", "EMPLOYEE_ROLE" ]) ] , specialityController.allSpecialities );
+        routes.post( "/speciality", [ AuthMiddleware.validateJWT([ "ADMIN_ROLE" ]) ], specialityController.createSpeciality );
+        routes.get( "/speciality/:id", [ AuthMiddleware.validateJWT([ "ADMIN_ROLE", "EMPLOYEE_ROLE" ]) ], specialityController.getSpeciality );
+        routes.put( "/speciality/:id",  [ AuthMiddleware.validateJWT([ "ADMIN_ROLE" ]) ],specialityController.updateSpeciality );
+        routes.delete( "/speciality/:id", [ AuthMiddleware.validateJWT([ "ADMIN_ROLE" ]) ], specialityController.deleteSpeciality );
 
         return routes;
     }

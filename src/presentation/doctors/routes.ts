@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { DoctorController } from "./controller";
-import { AdminMiddleware } from "../middlewares/Admin.middleware";
+import { AuthMiddleware } from "../middlewares";
 import { DoctorService } from "../services";
 
 export class DoctorRoutes {
@@ -14,11 +14,11 @@ export class DoctorRoutes {
         
         const doctorController = new DoctorController( doctorService );
 
-        routes.get( "/doctors", [ AdminMiddleware.validateJWT ], doctorController.allDoctors );
-        routes.post( "/doctors", [ AdminMiddleware.validateJWT ], doctorController.createDoctor );
-        routes.get( "/doctor/:id", [ AdminMiddleware.validateJWT ], doctorController.getDoctor );
-        routes.put( "/doctor/:id", [ AdminMiddleware.validateJWT ], doctorController.updateDoctor );
-        routes.delete( "/doctor/:id", [ AdminMiddleware.validateJWT ], doctorController.deleteDoctor );
+        routes.get( "/doctors", [ AuthMiddleware.validateJWT([ "ADMIN_ROLE", "EMPLOYEE_ROLE" ]) ], doctorController.allDoctors );
+        routes.post( "/doctors", [ AuthMiddleware.validateJWT([ "ADMIN_ROLE" ]) ], doctorController.createDoctor );
+        routes.get( "/doctor/:id", [ AuthMiddleware.validateJWT([ "ADMIN_ROLE", "EMPLOYEE_ROLE" ]) ], doctorController.getDoctor );
+        routes.put( "/doctor/:id", [ AuthMiddleware.validateJWT([ "ADMIN_ROLE" ]) ], doctorController.updateDoctor );
+        routes.delete( "/doctor/:id", [ AuthMiddleware.validateJWT([ "ADMIN_ROLE" ]) ], doctorController.deleteDoctor );
 
 
         return routes;
