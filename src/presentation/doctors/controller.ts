@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { DoctorService } from "../services";
 import { CreateDoctorDTO } from "../../domain/dtos";
 import { CustomError } from "../../domain";
+import { Validators } from "../../config";
 
 
 
@@ -50,7 +51,21 @@ export class DoctorController {
     }
 
     public updateDoctor = ( req: Request, res: Response ) => {
-        res.json("updateDoctor");
+
+        const { id } = req.params;
+
+
+        const [ error, createDoctorDto ] = CreateDoctorDTO.create( req.body );
+        if( error ) {
+            res.status( 400 ).json({ error });
+            return;
+        }
+
+        this.doctorService.updateDoctor( id, createDoctorDto! )
+            .then( response => res.json( response ) )
+            .catch( error => this.handleError( error, res ) );
+
+        
     }
 
     public deleteDoctor = ( req: Request, res: Response ) => {

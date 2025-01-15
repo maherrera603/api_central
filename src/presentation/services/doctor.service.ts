@@ -57,4 +57,24 @@ export class DoctorService {
 
     }
 
+
+    public async updateDoctor( id: string, createDoctorDto: CreateDoctorDTO ){
+
+        if( !Validators.isMongoID( id ) ) throw CustomError.badRequest( "Parameter id is not valid" );
+
+    
+        try {
+            
+            const existDoctor = await DoctorModel.findById( id );
+            if( !existDoctor ) throw CustomError.badRequest( "The doctor does not exists" );
+
+            const doctor = await DoctorModel.findByIdAndUpdate( {  _id: id }, createDoctorDto, { new: true } );
+            return { doctor }
+
+        } catch (error) {
+            throw CustomError.badRequest( "The doctor does not exists" );
+        }
+
+    }
+
 }
